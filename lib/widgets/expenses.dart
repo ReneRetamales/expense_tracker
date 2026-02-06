@@ -31,6 +31,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+      useSafeArea: true,
       isScrollControlled: true,
       context: context,
       builder: (ctx) => NewExpense(onAddExpense: _addExpense),
@@ -67,6 +68,13 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    // print("Medidas de pantalla: ${MediaQuery.of(context).size.flipped}");
+    // print("Tamaño del ancho: ${MediaQuery.of(context).size.width}");
+    // print("Tamaño de altura: ${MediaQuery.of(context).size.height}");
+    // print("Relación de aspecto: ${MediaQuery.of(context).size.aspectRatio}");
+
+    final width = MediaQuery.of(context).size.width;
+
     Widget mainContent = const Center(
       child: Text("No se encontraron cositas. Comienza agregando las tuyas!"),
     );
@@ -80,20 +88,25 @@ class _ExpensesState extends State<Expenses> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: false,
         title: const Text("Que cool!"),
-        // backgroundColor: const Color.fromARGB(255, 82, 196, 241),
         actions: [
           IconButton(onPressed: _openAddExpenseOverlay, icon: Icon(Icons.add)),
         ],
       ),
-      body: Column(
-        children: [
-          Chart(expenses: _registeredExpenses),
-          // Añadir toolbar aquí más tarde
-          const Text("The chart"),
-          Expanded(child: mainContent),
-        ],
-      ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(expenses: _registeredExpenses),
+                Expanded(child: mainContent),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(child: Chart(expenses: _registeredExpenses)),
+                Expanded(child: mainContent),
+              ],
+            ),
     );
   }
 }
